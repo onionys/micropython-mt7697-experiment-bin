@@ -1,40 +1,46 @@
 # micropython-mt7697-experiment-bin
 
-micropython mt7697 porting experiment version
+The official micropython porting of the linkit7697 HDK board for experiment and testing, and it is welcome to bugs report. 
 
     implementation version : 1.9.4
     platform : experiment
 
-此版本為實作版本 bin 檔。以實驗目的釋出歡迎 bug 回報與測試。Source Code 預計 2019 年上半釋出。
+The Source Code Project is under preparing for release in the first half of 2019.
 
-適用 linkit7697 HDK 開發板。
+# upload tool 
 
-MicroPython 官方網頁
+Upload the bin file by using the uploader downloaded from:
 
-    https://github.com/micropython/micropython
+   [MediaTek-Labs/mt76x7-uploader.git](https://github.com/MediaTek-Labs/mt76x7-uploader.git)
 
-# 燒錄工具使用 MTK 官方提供的 uploader 
+for example in MacOSX:
 
-[https://github.com/MediaTek-Labs/mt76x7-uploader.git](https://github.com/MediaTek-Labs/mt76x7-uploader.git)
-
-
-以 MacOSX 為例:
-
-將 micropython_linkit7697_experiment_version.bin 複製到 uploader 資料夾中執行下列指令
+Copy bin file `micropython_linkit7697_experiment_version.bin` to the directory of the `uploader` and execute the following command.
 
 	$ python ./upload.py -c /dev/tty.SLAB_USBtoUART -n ./da97.bin -t cm4 -f ./micropython_linkit7697_experiment_version.bin
 
-# 已完成功能測試範例
+# Connect to MicroPython REPL via USB Serial Port
 
-## 內部檔案系統操作
+Plug linkit7697 HDK to your computer via USB, then use serial connection application such as putty or minicom to connect with 
+MicroPython REPL. The serial port configuration parameters are :
 
-### 重置檔案系統方式
+    115200 8 N 1
 
-斷電後，將 `Pin8` 接地後再上電。
+The Serial Port window of Arduino IDE is a easy way to establish connection with linkit7697 MicroPython REPL.
 
-該動作會將 linkit7697 內部檔案系統所存放的檔案全部刪除後寫入預設的 `main.py` 和 `boot.py`。
+# Function Test Examples
 
-預設檔案目錄路徑為 `/flash`，容量約 400kb。
+## Internal File System Operation
+
+### Reset the internal file system 
+
+Attention! this action will delete all file in the internal file system and reset `main.py` and `boot.py` by default content.
+
+1. shutdown the linkit 7697 board, then connect Pin `p8` to GND。
+
+2. power on linkit 7697 board.
+
+the default is `/flash` with capacity about 400kb。
 
     # list all file
     import uos
@@ -79,7 +85,7 @@ irq
     def hello(x):
         print('hello')
     p6.irq(hello, Pin.IRQ_RISING)
-    # 按 USR BTN 測試
+    # use USR BTN for test
 
 ## PWM
 
@@ -91,9 +97,9 @@ irq
 
 ## ADC 
 
-mt7697 ADC 功能限定支援 p14, p15, p16, p17 
+ADC is only support by following pins : p14, p15, p16, p17.
 
-所讀取的值為 0 (0.0V) ~ 4095 (2.45~2.55V) (以官方Datasheet為準)
+The value returned is integer in the range of 0 (0.0V) ~ 4095 (2.45~2.55V).
 
     from machine import ADC
     p14 = ADC(14)
@@ -102,13 +108,14 @@ mt7697 ADC 功能限定支援 p14, p15, p16, p17
 
 ## UART
 
-mt7697 UART 功能限定 UART1，對應Pin 腳:
+UART is only supported by UART1 with following pins:
 
-    p6 : UART1_TX
-    p7 : UART1_RX
+    # p6 : UART1_TX
+	# p7 : UART1_RX
 
-    # 115200 8N1
     from machine import UART
+
+    # config as 115200 8N1
     uart = UART(1, 115200, 8, None, 1)
 
     # blocking read 
@@ -118,7 +125,7 @@ mt7697 UART 功能限定 UART1，對應Pin 腳:
     # write 
     uart.write('hello')
 
-nonblocking read: (timeout 單位為 ms)
+nonblocking read: (timeout unit : ms)
 
     from machine import UART
     uart = UART(1, 115200, 8, None, 1, timeout = 1000)
@@ -126,21 +133,21 @@ nonblocking read: (timeout 單位為 ms)
 
 ## Timer
 
-period 單位為 ms
-
     def hello(x):
         print('hello')
 	
 	from machine import Timer
 	t0 = Timer(0)
+
+	# period unit : ms
 	t0.init(mode=Timer.PERIODIC, callback=hello, period=1000)
 
 	# stop timer
 	t0.deinit()
 
-# SPI Master (default micropython Soft SPI)
+## SPI Master (default micropython Soft SPI)
 
-目前只提供 Master mode，使用 Micropython 官方版本軟體 SPI。
+Master mode only, implemented by MicroPython soft SPI.
 
     # SPI CS   : p10
 	# SPI MOSI : p11
@@ -155,9 +162,9 @@ period 單位為 ms
 
 [ref](https://github.com/micropython/micropython/wiki/Hardware-API)
 
-# I2C Master 
+## I2C Master 
 
-目前只提供 Master mode，使用 Micropython 官方版本軟體 I2C。
+Master mode only, implemented by MicroPython soft I2C.
 
     # I2C SCL : p8
     # I2C SDA : p9
@@ -171,7 +178,7 @@ period 單位為 ms
 
 ## WDT
 
-Watch Dog timeout 限定提供一個
+Only support one Watch Dog.
 
 timeout : 0 ~ 30 秒
 
@@ -180,7 +187,7 @@ timeout : 0 ~ 30 秒
 	# wait 5 second for reboot
 	wdt.feed()
 
-# WiFi STA mode TCP client connection
+## WiFi STA mode TCP client connection
 
     import network, usocket
 	wlan = network.WLAN()
@@ -192,11 +199,11 @@ timeout : 0 ~ 30 秒
 	soc.send(b'hello world')
 	print(soc.recv(1024))
 
-# 其他功能
+# Other functions
 
-實作中
+Still in working
 
-# 開發與維護人員
+# Developers
 
 onionys
 
