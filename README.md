@@ -26,7 +26,7 @@ MicroPython REPL. The serial port configuration parameters are :
 
     115200 8 N 1
 
-The Serial Port window of Arduino IDE is a easy way to establish connection with linkit7697 MicroPython REPL.
+The Serial Port window of Arduino IDE is an easy way to establish connection with linkit7697 MicroPython REPL.
 
 # Function Test Examples
 
