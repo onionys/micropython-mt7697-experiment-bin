@@ -1,5 +1,7 @@
 # micropython-mt7697-experiment-bin
 
+update date: 2019-01-17
+
 The official micropython porting of the linkit7697 HDK board for experiment and testing, and it is welcome to bugs report. 
 
     implementation version : 1.9.4
@@ -91,7 +93,7 @@ irq
 
     from machine import PWM
     # freq : 400 ~ 19000 Hz, 
-    # duty : 0 ~ 1023
+    # duty : 0 ~ 1024
     p7 = PWM(7,freq=1024,duty=1000)
     p7.duty(200)
 
