@@ -1,13 +1,25 @@
 # micropython-mt7697-experiment-bin
 
-update date: 2019-01-17
-
 The official micropython porting of the linkit7697 HDK board for experiment and testing, and it is welcome to bugs report. 
 
     implementation version : 1.9.4
     platform : experiment
 
 The Source Code Project is under preparing for release in the first half of 2019.
+
+# mu editor (preparing)
+
+Now we are preparing the mu editor for mt7697 micropython and goint to release test version ASAP.
+
+# update 
+
+date : 2019-01-28
+
+- add help() function to show brief info of linkit7697 board.
+- add machine.UARTdefault set `9600 8 N 1`
+- add RTC function
+- fix PWM duty cycle bug
+
 
 # upload tool 
 
@@ -59,6 +71,55 @@ the default is `/flash` with capacity about 400kb。
 	    print(line)
 
 
+## Help()
+
+show brief info of linkit7697 board:
+
+    help()
+
+print
+
+
+    Welcome to MicroPython on the linkit7697 HDK!
+    
+    For generic online docs please visit http://docs.micropython.org/
+    
+    For release info please visit https://github.com/onionys/micropython-mt7697-experiment-bin
+    
+     linkit 7697 HDK Pin map
+                     /--------------------\
+                     |* GND          3V3 *|
+           UART0_RX--|* P0           P6  *|--UART1_TX-EINT20-(USR-BTN)
+     EINT2-UART0_TX--|* P1           P7  *|--UART1_RX--------(USR-LED)
+     EINT0-----------|* P2           P8  *|--HW_I2C1_CLK
+     EINT22----------|* P3           P9  *|--HW_I2C1_DATA
+              IR_RX--|* P4           P10 *|--HW_SPI_CS0
+              IR_TX--|* P5           P11 *|--HW_SPI_MOSI
+                     |* GND          P12 *|--HW_SPI_MISO
+          (RST-BTN)--|* RST          P13 *|--HW_SPI_SCK
+                     |* 3V3          P14 *|--ADC_IN0
+                     |* 5V           P15 *|--ADC_IN1
+                     |* D-           P16 *|--ADC_IN2
+                     |* D+           P17 *|--ADC_IN3
+                     |* GND          GND *|
+                     | [RST-BTN] [USR-BTN]|
+                     |       /-----\      |
+                     |       |     |      |
+                     ----------------------
+                               USB
+     PWM: P0~P17
+    
+    Control commands:
+      CTRL-A        -- on a blank line, enter raw REPL mode
+      CTRL-B        -- on a blank line, enter normal REPL mode
+      CTRL-C        -- interrupt a running program
+      CTRL-D        -- on a blank line, do a soft reset of the board
+      CTRL-E        -- on a blank line, enter paste mode
+    
+    For further help on a specific object, type help(obj)
+    For a list of available modules, type help('modules')
+
+
 ## Pin
 
 output
@@ -99,7 +160,7 @@ irq
 
 ## ADC 
 
-ADC is only support by following pins : p14, p15, p16, p17.
+ADC is supported by following pins : p14, p15, p16, p17.
 
 The value returned is integer in the range of 0 (0.0V) ~ 4095 (2.45~2.55V).
 
@@ -110,15 +171,35 @@ The value returned is integer in the range of 0 (0.0V) ~ 4095 (2.45~2.55V).
 
 ## UART
 
-UART is only supported by UART1 with following pins:
+UART is supported by UART1 with following pins:
 
     # p6 : UART1_TX
 	# p7 : UART1_RX
 
-    from machine import UART
+    UART(1, baudrate=9600, bits=8, parity=None, stop=1, timeout=-1)
+    
+    only support UART 1
+    
+    baudrate :
+        110, 300, 1200, 2400, 4800, 9600(defualt), 19200, 38400, 57600,
+        115200, 230400, 460800, 921600
+    
+    bits :
+        5, 6, 7, 8 (defualt)
+    
+    parity :
+        None (or 0)
+        1 (ODD:default) 
+        2 (EVEN)
+    
+    stop :
+        1(defualt), 2
+    
+example:
 
-    # config as 115200 8N1
-    uart = UART(1, 115200, 8, None, 1)
+    from machine import UART
+    uart = UART(1,115200)
+    uart = UART(1,115200,8,None,1)
 
     # blocking read 
     data = uart.read()
@@ -161,6 +242,24 @@ Master mode only, implemented by MicroPython soft SPI.
 	cs(0)
 	spi = SPI(mosi = 11, miso = 12, sck = 13)
 	spi.write(bytes([1,2,3,4,5]))
+
+## RTC 
+
+    from machine import RTC
+    my_rtc = RTC()
+
+    # init
+    my_rtc.init() # enable RTC
+
+    # set new datetime:
+    new_datetime = (2019,1,28,14,22,30) tuple : (year, mon, day, hour, min, sec)
+    my_rtc.datetime(new_datetime)   # The RTC is enabled
+                                    # if had not be enabled yet.
+
+    # get datetime
+    now = my_rtc.datetime() # return tuple of datetime
+                            # (year, mon, day, hour, min, sec)
+                            # ex: (2019,1,28,14,22,35)
 
 [ref](https://github.com/micropython/micropython/wiki/Hardware-API)
 
