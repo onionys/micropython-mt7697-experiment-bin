@@ -9,7 +9,7 @@ The Source Code Project is under preparing for release in the first half of 2019
 
 # mu editor (preparing)
 
-Now we are preparing the mu editor for mt7697 micropython and goint to release test version ASAP.
+Now we are preparing the mu editor for mt7697 micropython and going to release test version ASAP.
 
 # update 
 
