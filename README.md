@@ -7,11 +7,17 @@ The official micropython porting of the linkit7697 HDK board for experiment and 
 
 The Source Code Project is under preparing for release in the first half of 2019.
 
+
 # mu editor (preparing)
 
 Now we are preparing the mu editor for mt7697 micropython and going to release test version ASAP.
 
-# update 
+
+# update log
+
+date : 2019-02-02
+
+- transfer micropython version to 1.10
 
 date : 2019-01-28
 
@@ -33,6 +39,7 @@ Copy bin file `micropython_linkit7697_experiment_version.bin` to the directory o
 
 	$ python ./upload.py -c /dev/tty.SLAB_USBtoUART -n ./da97.bin -t cm4 -f ./micropython_linkit7697_experiment_version.bin
 
+
 # Connect to MicroPython REPL via USB Serial Port
 
 Plug linkit7697 HDK to your computer via USB, then use serial connection application such as putty or minicom to connect with 
@@ -41,6 +48,7 @@ MicroPython REPL. The serial port configuration parameters are :
     115200 8 N 1
 
 The Serial Port window of Arduino IDE is an easy way to establish connection with linkit7697 MicroPython REPL.
+
 
 # Function Test Examples
 
