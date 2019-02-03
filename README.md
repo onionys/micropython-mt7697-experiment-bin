@@ -260,9 +260,11 @@ Master mode only, implemented by MicroPython soft SPI.
     my_rtc.init() # enable RTC
 
     # set new datetime:
-    new_datetime = (2019,1,28,14,22,30) tuple : (year, mon, day, hour, min, sec)
-    my_rtc.datetime(new_datetime)   # The RTC is enabled
-                                    # if had not be enabled yet.
+	# tuple : (year, mon, day, hour, min, sec)
+    new_datetime = (2019,1,28,14,22,30) 
+
+    my_rtc.now(new_datetime)   # The RTC is enabled
+                               # if had not be enabled yet.
 
     # get datetime
     now = my_rtc.datetime() # return tuple of datetime
